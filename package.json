@@ -1,0 +1,23 @@
+{
+  "name": "learn-webpack",
+  "version": "1.0.0",
+  "description": "webpack是一个打包工具",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meizilp/learn-webpack.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meizilp/learn-webpack/issues"
+  },
+  "homepage": "https://github.com/meizilp/learn-webpack#readme",
+  "devDependencies": {
+    "webpack": "^3.6.0"
+  }
+}
