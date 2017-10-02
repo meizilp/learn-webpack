@@ -26,3 +26,8 @@ npm i lodash
 webpack src/index.js dist/bundle.js
 用浏览器查看 dist/index.html
 PS:如果index.js中不使用import引入lodash模块，那么webpack打包时就不能找到依赖关系，就不会打包lodash的代码，页面就无法浏览了。
+
+通过webpack配置文件打包
+touch webpack.config.js
+编辑webpack.config.js
+webpack
