@@ -273,3 +273,9 @@ src/style.css
 ![添加图片效果图](./doc/添加图片效果图.png)
 
 ### 加载字体
+
+TODO:woff、ttf、otf etc.
+
+### 加载数据
+
+TODO:JSON、XML、CSV etc.
