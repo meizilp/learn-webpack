@@ -185,4 +185,91 @@ module.exports = {
 </html>
 ```
 
----
+### 加载图片
+
+```sh
+npm i file-loader --save-dev
+编辑webpack.config.js，图片文件由file-loader来处理。
+项目中添加一个图片。
+编辑src/index.js，引入图片文件，并创建Image元素使用图片。
+编辑src/style.css，也引入图片文件。
+执行webpack。图片会被复制到dist目录，并且以hash值命名；index.js中的文件路径会更新；css中的路径会被css-loader更新。
+```
+
+webpack.config.js
+
+```js
+const path = require('path')
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'dist')
+    },
+    module: {
+        rules: [
+            { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+            { test: /\.(png|svg|jpg|gif)$/, use: ['file-loader'] }   //文案由file-loader来处理
+        ]
+    }
+}
+```
+
+src/index.js
+
+```js
+import _ from 'lodash'
+import './style.css'
+import Icon from './icon.png'       //引入图片文件
+
+function component() {
+    let element = document.createElement('div')
+
+    element.innerHTML = _.join(['Hello', 'webpack.'], ' ')
+    element.classList.add('hello')
+
+    let myIcon = new Image()        //创建图像元素
+    myIcon.src = Icon               //图像元素的图片内容
+    element.appendChild(myIcon)     //加入Div
+
+    return element
+}
+
+document.body.appendChild(component())
+```
+
+src/style.css
+
+```css
+.hello {
+    color:red;
+    background: url('./icon.png');  /*引用图片*/
+}
+```
+
+浏览器中最终加载的index.html
+
+```html
+<html>
+<head>
+    <title>Document</title>
+    <style type="text/css">
+        .hello {
+            color: red;
+            background: url(489a185362f234e8cdb207396865e11c.png);
+        }
+    </style>
+</head>
+<body>
+    <script src="bundle.js"></script>
+    <div class="hello">Hello webpack.
+        <img src="489a185362f234e8cdb207396865e11c.png">
+    </div>
+</body>
+</html>
+```
+
+最终的效果看上去就是这样：
+![添加图片效果图](./doc/添加图片效果图.png)
+
+### 加载字体
