@@ -18,9 +18,13 @@
   },
   "homepage": "https://github.com/meizilp/learn-webpack#readme",
   "devDependencies": {
+    "@types/node": "^8.0.32",
+    "@types/webpack": "^3.0.13",
     "css-loader": "^0.28.7",
     "file-loader": "^1.1.4",
     "style-loader": "^0.18.2",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.5.3",
     "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": "^3.6.0"
   },

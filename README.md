@@ -1,6 +1,78 @@
 # learn-webpack
 
-webpack是一个打包工具
+webpack是一个模块打包工具  
+通过学习，最终生成一个基本的webpack配置文档。
+
+## 核心概念
+
+1. 入口(entry)：webpack创建依赖关系时的起点。
+1. 输出(output)：打包后的代码存放信息。
+1. Loader：把不同类型的文件转换为可以加载的模块。
+1. 插件(plugins)：在打包过程中执行操作和自定义功能。
+
+### 入口(entry)
+
+在config对象中以entry属性来定义。
+
+1. 简写语法：`entry: string|Array<string>`  
+    entry属性的值可以是一个字符串或者一个数组。
+    ```js
+    entry: './path/to/my/entry/file.js'
+    entry: ['./path/to/my/entry/file1.js','./path/to/my/entry/file2.js']
+    ```
+1. 对象语法：`entry: {[entryChunkName: string]: string|Array<string>}`  
+    对象语法可以给每个条目一个名字；每个条目又可以是一个字符串或者一个数组。
+    ```js
+    entry: {
+        app: './src/app.js',
+        vendors: './src/vendors.js'
+    }
+    ```
+
+### 输出(output)
+
+1. 单个输出文件
+    ```js
+    output: {
+        filename: 'bundle.js',
+        path: '/home/proj/public/assets'
+    }
+    ```
+1. 多个输出文件  
+    使用了[name]变量，其值是entry中定义的名字。
+    ```js
+    entry: {
+        app: './src/app.js',
+        search: './src/search.js'
+    },
+    output: {
+        filename: '[name].js',
+        path: __dirname + '/dist'
+    }
+    ```
+
+### Loader
+
+在module属性的rules属性定义什么样的文件需要什么样的loader处理；每个不同的loader都需要单独安装。
+    ```js
+    module: {
+        rules: [
+            { test: /\.css$/, use: 'css-loader' },
+            { test: /\.ts$/, use: 'ts-loader' }
+        ]
+    }
+    ```
+Loader支持链式传递，一个文件可以被多个loader依次处理。
+
+### 插件（Plugins）
+
+向plugins属性传入new实例；插件也支持选项配置。
+    ```js
+    plugins: [
+        new webpack.optimize.UglifyJsPlugin(),
+        new HtmlWebpackPlugin({template: './src/index.html'})
+    ]
+    ```
 
 ## 安装
 
@@ -279,3 +351,134 @@ TODO:woff、ttf、otf etc.
 ### 加载数据
 
 TODO:JSON、XML、CSV etc.
+
+## 管理输出
+
+1.代码可以不必都打在一个bundle中
+2.自动生成的index.html
+	原来的index.html内容会怎么处理？彻底覆盖？
+	如何通过模板来生成index.html
+3.清理dist文件夹
+4.webpack是如何实现文件改名后仍然在index.html中有正确的映射关系的？
+	有个manifest
+
+## 开发环境下使用webpack
+
+1.source map
+	inline-souce-map。和ts配合时呢？
+2.自动编译
+	watch模式；
+	自动刷新页面的server；
+3.和文本编辑器的配合
+
+## 生产环境下使用webpack：
+
+Tree Shaking：移除没使用的代码
+	webpack会不导出
+	uglify负责移除
+
+生产环境配置：
+	config拆分共用
+	merge是否可以用最新的assign方法来替代
+	npm脚本
+    代码压缩
+    source map
+    指定环境
+
+## 代码分离
+
+两个entry配合[name]变量？
+防止重复。
+    CommonsChunkPlugin
+        针对entry中的每个条目定义一个CommonsChunkPlugin对象
+        如果entry中的某个条目是数组形式的，这个条目也只需要一个CommonsChunkPlugin对象
+        提取node_modules下公共库到一个文件中，常用的配置写法：(这样岂不要把依赖的模块都写上？就麻烦了)
+            new webpack.optimize.CommonsChunkPlugin({
+                name: "vendor",         /*在entry中一般用vendor名称的数组来指明vendor*/
+                minChunks: function(module){
+                return module.context && module.context.indexOf("node_modules") !== -1;
+                }
+            }),
+        如果给插件传递的参数中，name字段在entry中不存在同名条目，那么就是提取webpack的脚手架代码，并且脚手架代码要在最后提取（也就是最后一个CommonsChunkPlugin对象）
+            new webpack.optimize.CommonsChunkPlugin({
+                name: "manifest",       /*一般用manifest来作为脚手架的名称，除非和entry中名字冲突*/
+                minChunks: Infinity
+            })
+        如果传递的参数中不传递name或者names字段，但是把children设置为true，是不是可以解决要明确写明白所有使用到的库的问题？
+
+    webpack-bundle-analyzer bundle体积分析
+        webpack.config.js
+            var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+            // ...
+            plugins: [new BundleAnalyzerPlugin()]
+            第一步：
+            webpack --profile --json > stats.json
+            第二步：
+            webpack --profile --json | Out-file 'stats.json' -Encoding OEM
+
+## 懒加载
+
+## 缓存
+
+通过output中的[name][chunkhash]变量
+处理webpack的脚手架代码，避免干扰chunkhash的值
+    entry中没有的name
+模块标识符解决新模块引入干扰库的chunkhash值计算
+    new webpack.HashedModuleIdsPlugin(),
+
+## 创建库
+
+有需求的时候再研究
+
+## Typescript
+
+typescript和awesome-typescript-loader
+module.exports = {
+ 
+  // Currently we need to add '.ts' to the resolve.extensions array. 
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx']
+  },
+ 
+  // Source maps support ('inline-source-map' also works) 
+  devtool: 'source-map',
+ 
+  // Add the loader for .ts files. 
+  module: {
+    loaders: [
+      {
+        test: /\.tsx?$/,
+        loader: 'awesome-typescript-loader'
+      }
+    ]
+  }
+};
+
+### 用typescript写配置文件
+
+npm install --save-dev typescript ts-node @types/node @types/webpack
+
+ts-node用来通过node执行ts文件
+
+import * as webpack from 'webpack';
+import * as path from 'path';
+declare var __dirname;
+
+const config: webpack.Configuration = {
+  entry: './foo.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'foo.bundle.js'
+  }
+};
+
+export default config;
+
+然后同样执行webpack就会找到此配置文件
+
+## 全局变量方式使用库
+
+ externals: {
+        "react": "React",
+        "react-dom": "ReactDOM"
+    },

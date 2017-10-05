@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import './style.css'
-import Icon from './icon.png'
+//import './style.css'
+//import Icon from './icon.png'
 
 function component() {
     let element = document.createElement('div')
@@ -8,9 +8,9 @@ function component() {
     element.innerHTML = _.join(['Hello', 'webpack.'], ' ')
     element.classList.add('hello')
 
-    let myIcon = new Image()
-    myIcon.src = Icon
-    element.appendChild(myIcon)
+//    let myIcon = new Image()
+//    myIcon.src = Icon
+//    element.appendChild(myIcon)
 
     return element
 }
